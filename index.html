@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مركز التواصل</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#05060d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="مركز التواصل">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zain:wght@300;400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--beam:#63f5ff;--dim:#8b93b8;--card:rgba(255,255,255,.06);--edge:rgba(255,255,255,.11);--ink:#eaf2ff}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Zain","Segoe UI",Tahoma,sans-serif;background:#05060d;color:var(--ink);
+  overflow-x:hidden;-webkit-tap-highlight-color:transparent;padding-bottom:env(safe-area-inset-bottom)}
+.sky{position:fixed;inset:0;z-index:-3}
+.grid{position:fixed;inset:-40% 0 -10%;z-index:-2;
+  background-image:linear-gradient(var(--gl) 1px,transparent 1px),linear-gradient(90deg,var(--gl) 1px,transparent 1px);
+  background-size:56px 56px;transform:perspective(520px) rotateX(66deg);transform-origin:50% 100%;
+  -webkit-mask-image:linear-gradient(to top,#000,transparent 62%);mask-image:linear-gradient(to top,#000,transparent 62%);
+  animation:drift 14s linear infinite;opacity:.5}
+@keyframes drift{to{background-position:0 56px,0 0}}
+body[data-theme=neon]{--gl:rgba(99,245,255,.22);--beam:#63f5ff}
+body[data-theme=neon] .sky{background:radial-gradient(120% 80% at 80% -10%,#1a2a6b,transparent 55%),radial-gradient(90% 70% at 10% 110%,#5a1f7a,transparent 60%),linear-gradient(180deg,#05060d,#0b1026 60%,#05060d)}
+body[data-theme=space]{--gl:rgba(160,140,255,.14);--beam:#c4a6ff}
+body[data-theme=space] .sky{background:radial-gradient(100% 70% at 50% -20%,#2b1b57,transparent 60%),radial-gradient(80% 60% at 90% 100%,#0d3b52,transparent 60%),#04030a}
+body[data-theme=space] .grid{opacity:.28}
+body[data-theme=rain]{--gl:rgba(80,255,160,.16);--beam:#4de38b}
+body[data-theme=rain] .sky{background:radial-gradient(110% 70% at 20% -10%,#06341f,transparent 55%),linear-gradient(180deg,#020604,#03130c 60%,#020604)}
+body[data-theme=day]{--ink:#101828;--dim:#5c6480;--card:rgba(255,255,255,.75);--edge:rgba(16,24,40,.10);--gl:rgba(80,110,200,.13);--beam:#2563eb}
+body[data-theme=day] .sky{background:radial-gradient(110% 70% at 80% -10%,#dbe7ff,transparent 60%),linear-gradient(180deg,#f2f5fb,#e8edf7)}
+
+header{padding:26px 18px 4px;text-align:center;position:relative}
+.clock{font-size:clamp(38px,12vw,64px);font-weight:800;letter-spacing:2px;line-height:.95;
+  font-variant-numeric:tabular-nums;text-shadow:0 0 26px color-mix(in srgb,var(--beam) 55%,transparent)}
+body[data-theme=day] .clock{text-shadow:none}
+.stamp{margin-top:6px;color:var(--dim);font-size:15px}
+.pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--beam);
+  box-shadow:0 0 10px var(--beam);margin-left:7px;animation:blink 2.2s ease-in-out infinite;vertical-align:middle}
+@keyframes blink{50%{opacity:.25}}
+.tools{position:absolute;top:22px;left:16px;display:flex;gap:7px}
+.tools button{width:36px;height:36px;border-radius:12px;border:1px solid var(--edge);
+  background:var(--card);color:var(--ink);font-size:15px;cursor:pointer}
+
+main{max-width:780px;margin:0 auto;padding:14px 14px 70px}
+.find{position:relative;margin-bottom:12px}
+.find input{width:100%;padding:12px 40px 12px 14px;border-radius:15px;border:1px solid var(--edge);
+  background:var(--card);color:inherit;font-family:inherit;font-size:15px}
+.find input:focus{outline:none;border-color:var(--beam)}
+.find::before{content:"⌕";position:absolute;right:14px;top:11px;color:var(--dim);font-size:17px}
+.results{margin-bottom:14px;border:1px solid var(--edge);border-radius:16px;overflow:hidden;background:var(--card)}
+.results div{display:flex;align-items:center;gap:10px;padding:11px 13px;border-bottom:1px solid var(--edge)}
+.results div:last-child{border:none}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.results b{font-weight:700;font-size:15px}
+.results small{color:var(--dim);font-size:12.5px;margin-inline-start:auto}
+.results button{padding:6px 11px;border-radius:10px;border:1px solid var(--edge);background:transparent;
+  color:var(--ink);font-family:inherit;font-size:12.5px;cursor:pointer}
+
+.brief{border:1px solid var(--edge);border-radius:18px;background:var(--card);padding:13px 15px;margin-bottom:13px;font-size:14px;line-height:1.9}
+.brief h4{font-size:15px;margin-bottom:4px}
+.brief span{color:var(--dim)}
+.bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;gap:10px}
+.bar>span{color:var(--dim);font-size:14px}
+.chip{padding:7px 13px;border-radius:999px;border:1px solid var(--edge);background:var(--card);
+  color:var(--ink);font-family:inherit;font-size:13.5px;cursor:pointer}
+
+.deck{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.tile{position:relative;background:linear-gradient(160deg,var(--card),rgba(255,255,255,.02));
+  border:1px solid var(--edge);border-radius:20px;padding:15px 13px 13px;overflow:hidden;cursor:pointer;
+  transition:transform .16s ease,opacity .16s ease;touch-action:pan-y}
+.tile:active{transform:scale(.97)}
+.tile:focus-visible{outline:2px solid var(--beam);outline-offset:3px}
+.tile.dragging{opacity:.55;transform:scale(1.04);z-index:5;box-shadow:0 12px 40px -10px #000}
+.tile::before{content:"";position:absolute;inset:-60% -30% auto -30%;height:120%;
+  background:radial-gradient(50% 50% at 50% 0%,var(--glow),transparent 70%);opacity:.22;pointer-events:none}
+.tile::after{content:"";position:absolute;top:0;right:14px;left:14px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--glow),transparent)}
+.head{display:flex;align-items:flex-start;justify-content:space-between}
+.glyph{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(0,0,0,.3);
+  border:1px solid var(--glow);box-shadow:0 0 16px -5px var(--glow);font-weight:800;font-size:19px;color:var(--glow)}
+body[data-theme=day] .glyph{background:rgba(255,255,255,.7)}
+.glyph svg{width:23px;height:23px;stroke:var(--glow);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.plus{width:32px;height:32px;border-radius:10px;border:1px solid var(--glow);background:transparent;
+  color:var(--glow);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.name{margin-top:11px;font-size:19px;font-weight:700}
+.readout{margin-top:9px;border-top:1px dashed var(--edge);padding-top:9px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:5px}
+.k{color:var(--dim);font-size:12.5px;white-space:nowrap}
+.v{font-weight:700;font-size:14.5px}
+.count{font-size:21px;color:var(--glow);font-variant-numeric:tabular-nums}
+.spark{display:flex;align-items:flex-end;gap:3px;height:22px;margin-top:9px}
+.spark i{flex:1;background:var(--glow);opacity:.45;border-radius:2px;min-height:2px}
+.spark i.now{opacity:1}
+.flag{margin-top:8px;font-size:12px;color:#ffb454;line-height:1.6}
+.mini{margin-top:10px;display:flex;gap:7px}
+.mini button{flex:1;padding:7px;border-radius:11px;background:transparent;border:1px solid var(--edge);
+  color:var(--dim);font-family:inherit;font-size:12.5px;cursor:pointer}
+.add{margin-top:13px;width:100%;padding:14px;border-radius:18px;border:1px dashed var(--edge);
+  background:transparent;color:var(--dim);font-family:inherit;font-size:15px;cursor:pointer}
+.total{margin-top:18px;text-align:center;color:var(--dim);font-size:15px}
+.total b{color:var(--ink);font-size:19px}
+.hint{margin-top:6px;text-align:center;color:var(--dim);opacity:.7;font-size:12.5px}
+
+dialog{border:none;background:transparent;padding:0;max-height:92vh}
+dialog::backdrop{background:rgba(3,5,14,.8);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.sheet{width:min(370px,90vw);max-height:88vh;overflow:auto;background:#0d1330;
+  border:1px solid color-mix(in srgb,var(--beam) 35%,transparent);border-radius:22px;padding:20px;color:#eaf2ff}
+body[data-theme=day] .sheet{background:#fff;color:#101828}
+.sheet h3{font-size:19px;margin-bottom:6px}
+.sub{color:var(--dim);font-size:13px;margin-bottom:8px;line-height:1.7}
+label{display:block;font-size:13px;color:var(--dim);margin:12px 0 5px}
+input,select,textarea{width:100%;padding:11px;border-radius:12px;border:1px solid var(--edge);
+  background:rgba(0,0,0,.3);color:inherit;font-family:inherit;font-size:15px}
+body[data-theme=day] input,body[data-theme=day] select,body[data-theme=day] textarea{background:#f3f5fa}
+textarea{min-height:100px;font-size:12px;line-height:1.5}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--beam)}
+.two{display:flex;gap:9px}.two>*{flex:1}
+.acts{display:flex;gap:9px;margin-top:16px}
+.acts button{flex:1;padding:11px;border-radius:12px;border:none;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.save{background:var(--beam);color:#04121a}
+.cancel{background:rgba(255,255,255,.09);color:inherit}
+body[data-theme=day] .cancel{background:#eef1f7}
+.danger{background:transparent;color:#ff7a7a;border:1px solid rgba(255,122,122,.4)!important}
+ul.people{list-style:none;margin-top:6px}
+ul.people li{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--edge);font-size:14.5px}
+ul.people li em{font-style:normal;color:var(--dim);font-size:11.5px;border:1px solid var(--edge);border-radius:999px;padding:2px 8px}
+ul.people li time{color:var(--dim);font-size:12px;margin-inline-start:auto}
+ul.people li button{padding:6px 10px;border-radius:9px;border:1px solid var(--edge);background:transparent;
+  color:inherit;font-family:inherit;font-size:12px;cursor:pointer}
+.pins{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.pins button{padding:8px 13px;border-radius:11px;border:1px solid var(--edge);background:transparent;color:inherit;font-family:inherit;cursor:pointer;display:grid;place-items:center}
+.pins button[aria-pressed=true]{border-color:var(--beam);color:var(--beam)}
+.months{display:flex;align-items:flex-end;gap:6px;height:90px;margin:12px 0 4px}
+.months div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%}
+.months b{width:100%;background:var(--beam);border-radius:4px;min-height:3px;opacity:.75}
+.months span{font-size:11px;color:var(--dim)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="sky"></div><div class="grid"></div>
+
+<header>
+  <div class="tools">
+    <button id="btnStats" title="الإحصائيات">📊</button>
+    <button id="btnSettings" title="الإعدادات">⚙</button>
+  </div>
+  <div class="clock" id="clock">--:--</div>
+  <div class="stamp"><span class="pulse"></span><span id="today"></span></div>
+</header>
+
+<main>
+  <div class="find"><input id="q" placeholder="ابحث عن شخص في كل التطبيقات"></div>
+  <div id="results"></div>
+  <div class="brief" id="brief" hidden></div>
+  <div class="bar">
+    <span id="opensToday"></span>
+    <button class="chip" id="btnSort">الترتيب: يدوي</button>
+  </div>
+  <div class="deck" id="deck"></div>
+  <button class="add" id="btnAdd">+ إضافة تطبيق</button>
+  <p class="total">مجموع من أضفتهم: <b id="sum">0</b> شخص</p>
+  <p class="hint">اضغط مطوّلًا على أي مربع لتحريكه وترتيب الشاشة.</p>
+</main>
+
+<dialog id="dEdit"><div class="sheet">
+  <h3 id="eTitle">تعديل</h3>
+  <label for="eName">اسم التطبيق</label><input id="eName">
+  <label>الأيقونة</label><div class="pins" id="eIcons"></div>
+  <div class="two">
+    <div><label for="eCount">عدد المضافين</label><input id="eCount" type="number" min="0" inputmode="numeric"></div>
+    <div><label for="eColor">اللون</label><input id="eColor" type="color" style="height:43px;padding:4px"></div>
+  </div>
+  <label for="eLimit">حد الفتحات اليومي (0 = بلا حد)</label><input id="eLimit" type="number" min="0" inputmode="numeric">
+  <label for="eApp">رابط فتح التطبيق</label><input id="eApp" placeholder="instagram://app">
+  <label for="eWeb">الرابط البديل</label><input id="eWeb" placeholder="https://...">
+  <label for="eChat">رابط المحادثة المباشرة — ضع {h} مكان المعرّف</label>
+  <input id="eChat" placeholder="https://wa.me/{h}">
+  <div class="acts"><button class="save" id="eSave">حفظ</button><button class="cancel" id="eCancel">إلغاء</button></div>
+  <div class="acts"><button class="danger" id="eDel">حذف هذا التطبيق</button></div>
+</div></dialog>
+
+<dialog id="dLog"><div class="sheet">
+  <h3 id="lTitle">السجل</h3>
+  <p class="sub">آخر خمسة أشخاص تحدثت معهم</p>
+  <div class="pins" id="lFilter"></div>
+  <ul class="people" id="lList"></ul>
+  <label for="pName">أضف شخصًا</label>
+  <input id="pName" placeholder="الاسم">
+  <div class="two" style="margin-top:9px">
+    <input id="pHandle" placeholder="الرقم أو المعرّف">
+    <select id="pTag"><option value="أصدقاء">أصدقاء</option><option value="عائلة">عائلة</option><option value="عمل">عمل</option><option value="أخرى">أخرى</option></select>
+  </div>
+  <div class="acts"><button class="save" id="pAdd">إضافة</button><button class="cancel" id="lClose">إغلاق</button></div>
+</div></dialog>
+
+<dialog id="dStats"><div class="sheet">
+  <h3>الإحصائيات</h3>
+  <p class="sub">الإضافات خلال الأشهر الستة الماضية</p>
+  <div class="pins" id="stApps"></div>
+  <div class="months" id="stChart"></div>
+  <p class="sub" id="stNote"></p>
+  <div class="acts"><button class="cancel" id="stClose">إغلاق</button></div>
+</div></dialog>
+
+<dialog id="dSet"><div class="sheet">
+  <h3>الإعدادات</h3>
+  <label>الثيم</label><div class="pins" id="themes"></div>
+  <label>التنبيهات</label>
+  <p class="sub">تذكير عند مرور أكثر من أسبوع دون التحدث مع أحدهم.</p>
+  <div class="pins"><button id="btnNotify">تفعيل تنبيهات النظام</button></div>
+  <label for="sData">نسخة احتياطية</label>
+  <textarea id="sData"></textarea>
+  <div class="acts"><button class="cancel" id="sCopy">نسخ</button><button class="cancel" id="sDown">حفظ ملف</button></div>
+  <div class="acts"><button class="cancel" id="sImport">استيراد من الصندوق</button><button class="save" id="sCancel">إغلاق</button></div>
+</div></dialog>
+
+<script>
+const ICONS={
+ snap:'<path d="M12 3c3 0 4.6 2.1 4.5 5 0 1 .2 1.6.9 1.8 1 .3 1.6.1 2 .5.4.5-.4 1.3-1.9 2-.5.3-.4.7-.2 1.2.5 1.2 1.7 2.3 3.2 2.7.5.2.4.7-.2 1-.8.4-1.9.5-2.3.9-.2.3-.1.9-.5 1.1-.6.3-1.8-.3-3.1 0-1.1.3-1.8 1.6-3.4 1.6s-2.3-1.3-3.4-1.6c-1.3-.3-2.5.3-3.1 0-.4-.2-.3-.8-.5-1.1-.4-.4-1.5-.5-2.3-.9-.6-.3-.7-.8-.2-1 1.5-.4 2.7-1.5 3.2-2.7.2-.5.3-.9-.2-1.2-1.5-.7-2.3-1.5-1.9-2 .4-.4 1-.2 2-.5.7-.2.9-.8.9-1.8C7.4 5.1 9 3 12 3z"/>',
+ insta:'<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1.1" fill="currentColor"/>',
+ wa:'<path d="M20 11.6c0 4.4-3.7 8-8.2 8-1.4 0-2.7-.3-3.8-1L4 20l1.5-3.8a7.8 7.8 0 0 1-1.2-4.2c0-4.4 3.6-8 8.1-8s7.6 3.2 7.6 7.6z"/><path d="M9.2 9c.3 1.9 2 3.6 3.9 4l1-1.1 1.5.8-.4 1.4c-1.9.4-4.4-1-5.7-2.5-1-1.2-1.5-2.3-1.4-3l1.4-.4z"/>',
+ tiktok:'<circle cx="8.5" cy="16.5" r="3.5"/><path d="M12 16.5V4c.6 2.6 2.2 4.1 4.8 4.4"/>',
+ chat:'<path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4V6z"/>',
+ bird:'<path d="M20 6c-.7.5-1.5.8-2.3 1A3.6 3.6 0 0 0 11.4 9c-3-.2-5.6-1.6-7.4-3.8-.9 1.6-.4 3.6 1.1 4.6-.6 0-1.2-.2-1.7-.5 0 1.7 1.2 3.1 2.8 3.4-.5.2-1.1.2-1.6.1.5 1.4 1.8 2.4 3.3 2.4A7.3 7.3 0 0 1 3 16.7 10.3 10.3 0 0 0 18 8.2c.7-.5 1.4-1.2 2-2z"/>',
+ play:'<path d="M4 7.5A3.5 3.5 0 0 1 7.5 4h9A3.5 3.5 0 0 1 20 7.5v9a3.5 3.5 0 0 1-3.5 3.5h-9A3.5 3.5 0 0 1 4 16.5v-9z"/><path d="M10.5 9.2l4.5 2.8-4.5 2.8V9.2z"/>',
+ star:'<path d="M12 3.6l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.8l5.9-.8L12 3.6z"/>'};
+const ICON_NAMES={snap:"شبح",insta:"مربع",wa:"فقاعة",tiktok:"نغمة",chat:"محادثة",bird:"طائر",play:"تشغيل",star:"نجمة"};
+
+const DEFAULTS=[
+ {id:"snap",name:"سناب شات",glow:"#FFE13B",icon:"snap",app:"snapchat://",web:"https://www.snapchat.com/",chat:"https://www.snapchat.com/add/{h}"},
+ {id:"insta",name:"إنستقرام",glow:"#FF6EC7",icon:"insta",app:"instagram://app",web:"https://www.instagram.com/",chat:"https://www.instagram.com/{h}"},
+ {id:"wa",name:"واتساب",glow:"#4DE38B",icon:"wa",app:"whatsapp://",web:"https://web.whatsapp.com/",chat:"https://wa.me/{h}"},
+ {id:"tiktok",name:"تيك توك",glow:"#63F5FF",icon:"tiktok",app:"snssdk1233://",web:"https://www.tiktok.com/",chat:"https://www.tiktok.com/@{h}"}];
+
+const blank=a=>({...a,count:0,people:[],opens:{},adds:{},limit:0});
+let S={theme:"neon",sort:"manual",apps:DEFAULTS.map(blank)};
+const KEY="hub:v4";
+
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+const month=d=>(d||new Date().toISOString()).slice(0,7);
+const last7=()=>{const a=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);a.push(d.toISOString().slice(0,10))}return a};
+const last6m=()=>{const a=[],n=new Date();for(let i=5;i>=0;i--){const d=new Date(n.getFullYear(),n.getMonth()-i,1);
+  a.push(d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"))}return a};
+const daysSince=d=>Math.floor((Date.now()-new Date(d))/864e5);
+const weekOpens=a=>last7().reduce((s,d)=>s+(a.opens[d]||0),0);
+const MN=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+
+function load(){
+  try{const v=localStorage.getItem(KEY);if(v)S=Object.assign(S,JSON.parse(v))}catch(e){}
+  S.apps.forEach(a=>{a.people=a.people||[];a.opens=a.opens||{};a.adds=a.adds||{};a.limit=a.limit||0});
+  document.body.dataset.theme=S.theme;
+  render();tick();setInterval(tick,10000);setTimeout(()=>notifyStale(),2500);
+}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* ===== الشبكة ===== */
+const deck=$("deck");
+function ordered(){const a=[...S.apps];if(S.sort==="used")a.sort((x,y)=>weekOpens(y)-weekOpens(x));return a}
+
+function render(){
+  deck.innerHTML="";let sum=0,tOpens=0;
+  ordered().forEach(a=>{
+    sum+=+a.count||0;tOpens+=a.opens[today()]||0;
+    const last=a.people[0],mx=Math.max(1,...last7().map(d=>a.opens[d]||0));
+    const bars=last7().map((d,i)=>`<i class="${i===6?'now':''}" style="height:${Math.round((a.opens[d]||0)/mx*100)}%"></i>`).join("");
+    let flag="";
+    if(a.limit&&(a.opens[today()]||0)>=a.limit)flag+=`<div class="flag">تجاوزت حدك اليومي (${a.opens[today()]} من ${a.limit})</div>`;
+    if(last&&daysSince(last.date)>=7)flag+=`<div class="flag">مرّ ${daysSince(last.date)} يومًا منذ محادثتك مع ${last.name}</div>`;
+    const el=document.createElement("div");
+    el.className="tile";el.tabIndex=0;el.dataset.id=a.id;el.style.setProperty("--glow",a.glow);
+    el.innerHTML=`<div class="head">
+        <div class="glyph">${ICONS[a.icon]?`<svg viewBox="0 0 24 24">${ICONS[a.icon]}</svg>`:(a.name.trim()[0]||"؟")}</div>
+        <button class="plus" data-act="plus" title="زيادة العدد">+1</button></div>
+      <div class="name">${a.name}</div>
+      <div class="readout">
+        <div class="row"><span class="k">تمت إضافة</span><span class="v count">${a.count}</span></div>
+        <div class="row"><span class="k">آخر محادثة</span><span class="v">${last?last.name:"—"}</span></div>
+      </div>
+      <div class="spark">${bars}</div>
+      <div class="row"><span class="k">فتحات الأسبوع</span><span class="v">${weekOpens(a)}</span></div>
+      ${flag}
+      <div class="mini"><button data-act="log">السجل</button><button data-act="edit">تعديل</button></div>`;
+    el.addEventListener("click",e=>{
+      if(dragMoved)return;
+      const act=e.target.closest("[data-act]")?.dataset.act;
+      if(act==="plus"){e.stopPropagation();a.count++;a.adds[month()]=(a.adds[month()]||0)+1;persist();render()}
+      else if(act==="log"){e.stopPropagation();openLog(a)}
+      else if(act==="edit"){e.stopPropagation();openEdit(a)}
+      else launch(a);
+    });
+    el.addEventListener("keydown",e=>{if(e.key==="Enter")launch(a)});
+    el.addEventListener("pointerdown",holdStart);
+    deck.appendChild(el);
+  });
+  $("sum").textContent=sum;
+  $("opensToday").textContent="فتحات اليوم: "+tOpens;
+  $("btnSort").textContent=S.sort==="used"?"الترتيب: الأكثر استخدامًا":"الترتيب: يدوي";
+  brief();
+}
+
+function launch(a){
+  a.opens[today()]=(a.opens[today()]||0)+1;persist();render();
+  const t=Date.now();if(a.app)location.href=a.app;
+  setTimeout(()=>{if(Date.now()-t<1600&&a.web)window.open(a.web,"_blank","noopener")},a.app?900:0);
+}
+function chatWith(a,p){
+  if(!p.handle||!a.chat){alert("أضف معرّف "+p.name+" أولًا من نافذة السجل");return}
+  window.open(a.chat.replace("{h}",encodeURIComponent(p.handle.replace(/^[+@]/,""))),"_blank","noopener");
+}
+
+/* ===== السحب لإعادة الترتيب ===== */
+let hold=null,dragEl=null,dragMoved=false;
+function holdStart(e){
+  if(e.target.closest("button")||S.sort==="used")return;
+  dragMoved=false;
+  const startY=e.clientY,startX=e.clientX,el=e.currentTarget,pid=e.pointerId;
+  hold=setTimeout(()=>{
+    dragEl=el;el.classList.add("dragging");
+    try{el.setPointerCapture(pid)}catch(_){}
+    if(navigator.vibrate)navigator.vibrate(15);
+  },320);
+  const move=ev=>{
+    if(!dragEl){if(Math.hypot(ev.clientX-startX,ev.clientY-startY)>8)clearTimeout(hold);return}
+    dragMoved=true;
+    const over=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".tile");
+    if(over&&over!==dragEl){
+      const id=dragEl.dataset.id;
+      const i=S.apps.findIndex(x=>x.id===id),j=S.apps.findIndex(x=>x.id===over.dataset.id);
+      if(i>-1&&j>-1){
+        S.apps.splice(j,0,S.apps.splice(i,1)[0]);
+        render();
+        dragEl=[...deck.children].find(c=>c.dataset.id===id);
+        if(dragEl)dragEl.classList.add("dragging");
+      }
+    }
+  };
+  const up=()=>{
+    clearTimeout(hold);
+    if(dragEl){dragEl.classList.remove("dragging");dragEl=null;persist();render();setTimeout(()=>dragMoved=false,80)}
+    window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",up);
+    window.removeEventListener("pointercancel",up);
+  };
+  window.addEventListener("pointermove",move);window.addEventListener("pointerup",up);
+  window.addEventListener("pointercancel",up);
+}
+
+/* ===== ملخص ===== */
+function brief(){
+  const b=$("brief");
+  const top=[...S.apps].sort((x,y)=>weekOpens(y)-weekOpens(x))[0];
+  const adds=S.apps.reduce((s,a)=>s+(a.adds[month()]||0),0);
+  let far=null;
+  S.apps.forEach(a=>a.people.forEach(p=>{if(!far||new Date(p.date)<new Date(far.p.date))far={a,p}}));
+  if((!top||!weekOpens(top))&&!adds&&!far){b.hidden=true;return}
+  b.hidden=false;
+  b.innerHTML="<h4>ملخصك</h4>"+
+    (top&&weekOpens(top)?`<div>أكثر تطبيق هذا الأسبوع: <b>${top.name}</b> <span>(${weekOpens(top)} فتحة)</span></div>`:"")+
+    `<div>أضفت <b>${adds}</b> شخصًا هذا الشهر</div>`+
+    (far?`<div>أبعد محادثة: <b>${far.p.name}</b> <span>في ${far.a.name} منذ ${daysSince(far.p.date)} يومًا</span></div>`:"");
+}
+
+/* ===== البحث ===== */
+$("q").addEventListener("input",e=>{
+  const q=e.target.value.trim(),box=$("results");
+  if(!q){box.innerHTML="";box.className="";return}
+  const hits=[];
+  S.apps.forEach(a=>a.people.forEach(p=>{if(p.name.includes(q)||(p.handle||"").includes(q))hits.push({a,p})}));
+  box.className="results";
+  box.innerHTML=hits.length
+    ?hits.slice(0,12).map(({a,p},i)=>`<div><span class="dot" style="background:${a.glow}"></span>
+        <b>${p.name}</b><small>${a.name} · ${p.tag||"—"} · ${p.date}</small>
+        <button data-i="${i}">محادثة</button></div>`).join("")
+    :`<div><small style="margin:0">لا يوجد أحد بهذا الاسم في سجلاتك</small></div>`;
+  box.onclick=ev=>{const i=ev.target.dataset.i;if(i!=null)chatWith(hits[i].a,hits[i].p)};
+});
+
+/* ===== السجل ===== */
+const dLog=$("dLog");let cur=null,tagFilter="الكل";
+const TAGS=["الكل","أصدقاء","عائلة","عمل","أخرى"];
+function openLog(a){
+  cur=a;tagFilter="الكل";
+  $("lTitle").textContent="سجل "+a.name;
+  $("lFilter").innerHTML=TAGS.map(t=>`<button data-t="${t}" aria-pressed="${t===tagFilter}">${t}</button>`).join("");
+  $("lFilter").onclick=e=>{const t=e.target.dataset.t;if(!t)return;tagFilter=t;
+    [...e.currentTarget.children].forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===t));drawLog()};
+  $("pName").value="";$("pHandle").value="";
+  drawLog();dLog.showModal();
+}
+function drawLog(){
+  const list=cur.people.filter(p=>tagFilter==="الكل"||p.tag===tagFilter).slice(0,5);
+  $("lList").innerHTML=list.length?list.map(p=>{
+    const k=cur.people.indexOf(p);
+    return `<li>${p.name} <em>${p.tag||"—"}</em><time>${p.date}</time>
+      <button data-c="${k}">محادثة</button><button data-x="${k}">×</button></li>`}).join("")
+    :`<li><span style="color:var(--dim)">لا يوجد أحد هنا بعد</span></li>`;
+  $("lList").onclick=e=>{
+    const c=e.target.dataset.c,x=e.target.dataset.x;
+    if(c!=null)chatWith(cur,cur.people[c]);
+    if(x!=null){cur.people.splice(x,1);persist();drawLog();render()}
+  };
+}
+$("pAdd").onclick=()=>{
+  const n=$("pName").value.trim();if(!n)return;
+  cur.people=[{name:n,handle:$("pHandle").value.trim(),tag:$("pTag").value,date:today()},
+    ...cur.people.filter(p=>p.name!==n)].slice(0,20);
+  $("pName").value="";$("pHandle").value="";persist();drawLog();render();
+};
+$("lClose").onclick=()=>dLog.close();
+
+/* ===== تعديل التطبيق ===== */
+const dEdit=$("dEdit");let ed=null,edIcon=null;
+function openEdit(a){
+  ed=a;edIcon=a.icon||null;
+  $("eTitle").textContent="تعديل "+a.name;
+  $("eName").value=a.name;$("eCount").value=a.count;$("eColor").value=a.glow;
+  $("eLimit").value=a.limit||0;$("eApp").value=a.app||"";$("eWeb").value=a.web||"";$("eChat").value=a.chat||"";
+  $("eIcons").innerHTML=Object.keys(ICONS).map(k=>
+    `<button data-k="${k}" aria-pressed="${edIcon===k}" title="${ICON_NAMES[k]}">
+      <svg viewBox="0 0 24 24" style="width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">${ICONS[k]}</svg>
+     </button>`).join("")+`<button data-k="" aria-pressed="${!edIcon}">حرف</button>`;
+  $("eIcons").onclick=e=>{const b=e.target.closest("[data-k]");if(!b)return;edIcon=b.dataset.k||null;
+    [...e.currentTarget.children].forEach(x=>x.setAttribute("aria-pressed",(x.dataset.k||null)===edIcon))};
+  $("eDel").style.display=S.apps.length>1?"block":"none";
+  dEdit.showModal();
+}
+$("eSave").onclick=()=>{
+  const old=+ed.count||0,nw=Math.max(0,parseInt($("eCount").value||0,10));
+  if(nw>old)ed.adds[month()]=(ed.adds[month()]||0)+(nw-old);
+  ed.name=$("eName").value.trim()||ed.name;ed.count=nw;ed.glow=$("eColor").value;ed.icon=edIcon;
+  ed.limit=Math.max(0,parseInt($("eLimit").value||0,10));
+  ed.app=$("eApp").value.trim();ed.web=$("eWeb").value.trim();ed.chat=$("eChat").value.trim();
+  persist();render();dEdit.close();
+};
+$("eCancel").onclick=()=>dEdit.close();
+$("eDel").onclick=()=>{S.apps=S.apps.filter(x=>x!==ed);persist();render();dEdit.close()};
+$("btnAdd").onclick=()=>{const a=blank({id:"c"+Date.now(),name:"تطبيق جديد",glow:"#63f5ff",icon:"chat",app:"",web:"https://",chat:""});
+  S.apps.push(a);persist();render();openEdit(a)};
+$("btnSort").onclick=()=>{S.sort=S.sort==="used"?"manual":"used";persist();render()};
+
+/* ===== الإحصائيات ===== */
+const dStats=$("dStats");let stSel="all";
+$("btnStats").onclick=()=>{
+  $("stApps").innerHTML=`<button data-a="all" aria-pressed="true">الكل</button>`+
+    S.apps.map(a=>`<button data-a="${a.id}" aria-pressed="false">${a.name}</button>`).join("");
+  $("stApps").onclick=e=>{const id=e.target.dataset.a;if(!id)return;stSel=id;
+    [...e.currentTarget.children].forEach(b=>b.setAttribute("aria-pressed",b.dataset.a===id));drawStats()};
+  stSel="all";drawStats();dStats.showModal();
+};
+function drawStats(){
+  const ms=last6m(),val=m=>S.apps.filter(a=>stSel==="all"||a.id===stSel).reduce((s,a)=>s+(a.adds[m]||0),0);
+  const mx=Math.max(1,...ms.map(val));
+  $("stChart").innerHTML=ms.map(m=>
+    `<div><b style="height:${Math.round(val(m)/mx*100)}%" title="${val(m)}"></b><span>${MN[+m.slice(5)-1].slice(0,4)}</span></div>`).join("");
+  $("stNote").textContent=`المجموع في ستة أشهر: ${ms.reduce((s,m)=>s+val(m),0)} شخص · هذا الشهر: ${val(month())}`;
+}
+$("stClose").onclick=()=>dStats.close();
+
+/* ===== التنبيهات ===== */
+function stale(){const out=[];S.apps.forEach(a=>{const p=a.people[0];
+  if(p&&daysSince(p.date)>=7)out.push(`${p.name} (${a.name}) منذ ${daysSince(p.date)} يومًا`)});return out}
+$("btnNotify").onclick=async()=>{
+  if(!("Notification"in window)){$("btnNotify").textContent="غير مدعوم هنا";return}
+  const r=await Notification.requestPermission();
+  $("btnNotify").textContent=r==="granted"?"التنبيهات مفعّلة":"لم يُمنح الإذن";
+  if(r==="granted"){localStorage.setItem("hub:notify","1");notifyStale(true)}
+};
+function notifyStale(force){
+  if(!("Notification"in window))return;
+  if(localStorage.getItem("hub:notify")!=="1"||Notification.permission!=="granted")return;
+  if(!force&&localStorage.getItem("hub:lastNotify")===today())return;
+  const s=stale();if(!s.length)return;
+  try{new Notification("انقطعت عن بعض الأشخاص",{body:s.slice(0,3).join("\n"),icon:"icon-192.png"})}catch(e){}
+  localStorage.setItem("hub:lastNotify",today());
+}
+
+/* ===== الإعدادات ===== */
+const dSet=$("dSet"),THEMES={neon:"نيون",space:"فضاء",rain:"مطر رقمي",day:"نهاري"};
+$("btnSettings").onclick=()=>{
+  $("themes").innerHTML=Object.entries(THEMES).map(([k,v])=>`<button data-t="${k}" aria-pressed="${S.theme===k}">${v}</button>`).join("");
+  $("themes").onclick=e=>{const t=e.target.dataset.t;if(!t)return;S.theme=t;document.body.dataset.theme=t;persist();
+    [...e.currentTarget.children].forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===t))};
+  $("btnNotify").textContent=("Notification"in window&&Notification.permission==="granted")?"التنبيهات مفعّلة":"تفعيل تنبيهات النظام";
+  $("sData").value=JSON.stringify(S);
+  dSet.showModal();
+};
+$("sCancel").onclick=()=>dSet.close();
+$("sCopy").onclick=async()=>{const el=$("sData");el.select();
+  try{await navigator.clipboard.writeText(el.value);$("sCopy").textContent="تم النسخ"}catch(e){$("sCopy").textContent="انسخ يدويًا"}};
+$("sDown").onclick=()=>{const b=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
+  const u=URL.createObjectURL(b),a=document.createElement("a");
+  a.href=u;a.download="social-hub-backup.json";a.click();URL.revokeObjectURL(u)};
+$("sImport").onclick=()=>{
+  try{const o=JSON.parse($("sData").value);if(!o.apps)throw 0;
+    S=Object.assign(S,o);document.body.dataset.theme=S.theme;persist();render();dSet.close()}
+  catch(e){$("sImport").textContent="النص غير صالح"}
+};
+
+function tick(){
+  const n=new Date();
+  $("clock").textContent=String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");
+  $("today").textContent=n.toLocaleDateString("ar",{weekday:"long",day:"numeric",month:"long"});
+}
+load();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</html>
